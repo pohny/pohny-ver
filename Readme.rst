@@ -14,44 +14,75 @@ Description
 
 Two servers:
 
-  - twilio-server: on to handle incoming connection from twilio service, receive /message, /call and get /called. http only.
-    It's possible and recommanded to use https with a signed certificate. (Self signed certicate don't work with twilio :( )
+**twilio-server** :: on to handle incoming connection from twilio service, receive /message, /call and get /called. http only.
+It's possible and recommanded to use https with a signed certificate. (Self signed certicate don't work with twilio :( )
 
-  - pohny-server: handle pohny clients like pohny-web and pohny-cli, mostly uses websocket, but also use a bit of http for authentication and to communicate with twilio-server.
+**pohny-server** :: handle pohny clients like pohny-web and pohny-cli, mostly uses websocket, but also use a bit of http for authentication and to communicate with twilio-server.
 
 Requirements
 ============
 
 - **nodejs**
 
-- **coffeescript** ("npm install -g coffee-script")
+- **coffeescript** ``npm install -g coffee-script``
 
-- **mocha**  ("npm install -g mocha")
+- **mocha**  ``npm install -g mocha``
 
 Installation
 =============
 
 .. code-block:: bash
 
-  # clone repository and open project folder
 
-  # Install project dependancies (server-side)
-  npm install
+I. Setup a twilio account
+~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-  # Compile coffee sources
-  npm run build
+1. Subscribe to a twilio account, get a phone number and configure it
 
-  # Copy env template to desired environment and fill up variables with your credentials
-  cp etc/env.sh.dist etc/dev.sh
+2. Setup your twilio number (receive messages and calls):
+  Voice: POST http://yourdomain.com:3001/called
 
-  # Source your env (will be used by your server AND your tests)
-  source ./etc/dev.sh
+  Message: POST http://yourdomain.com:3001/message
 
-  # start your project
-  npm start
+  Screenshot: http://puu.sh/pg0t5/e12fcfdfe2.png
 
-  # run tests
-  npm test
+3. Setup a twilio app (emit calls)::
+
+  Voice: POST http://yourdomain.com:3001/call
+
+  Screenshot: http://puu.sh/pg0FM/d52b1ab64a.png
+
+II. Setup pohny-ver
+~~~~~~~~~~~~~~~~~~~~
+- clone repository on your server, and open folder
+
+- Install project dependancies (server-side)
+
+  ``npm install``
+
+- Compile coffee sources
+
+  ``npm run build``
+
+- Copy env template to desired environment and fill up variables with your credentials
+
+  ``cp etc/env.sh.dist etc/dev.sh``
+
+- Source your env (will be used by your server AND your tests)
+
+  ``source ./etc/dev.sh``
+
+- start your project
+
+  ``npm start``
+
+- run tests
+
+  ``npm test``
+
+II. Setup your client
+~~~~~~~~~~~~~~~~~~~~~
+Right now only pony-web is availble, check instructions there to install it: https://github.com/pohny/pohny-web
 
 
 Folder architecture
