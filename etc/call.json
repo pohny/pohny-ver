@@ -1,0 +1,13 @@
+{
+  "ApplicationSid": "AP00000000000000000000000000000000",
+  "ApiVersion": "2010-04-01",
+  "Called":     "",
+  "Caller":     "client:15005550006",
+  "CallStatus": "ringing",
+  "PhoneNumber": "+15005550007",
+  "CallSid":    "CA00000000000000000000000000000000",
+  "To":         "",
+  "From":       "client:15005550006",
+  "Direction":  "inbound",
+  "AccountSid": "AC00000000000000000000000000000000" }
+}

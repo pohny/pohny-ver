@@ -1,0 +1,46 @@
+{
+  "name": "pohny-ver",
+  "version": "0.0.1",
+
+  "scripts": {
+    "build": "coffee --compile --output build src",
+    "watch": "coffee --compile --watch --output build src",
+    "start": "node ./bin/www",
+    "test": "mocha test/*"
+  },
+
+  "dependencies": {
+
+    "requirejs": "*",
+    "debug": "*",
+    "lodash": "*",
+    "joi": "*",
+
+    "jwt-simple": "*",
+    "jsonrpc-simple": "*",
+    "request-promise": "*",
+
+    "bson": "*",
+    "websocket": "^1.0.23",
+    "express": "4.13.4",
+    "morgan" : "*",
+    "body-parser" : "*",
+    "om-nomnom": "*",
+    "bluebird": "*",
+
+    "twilio": "2.9.1"
+  },
+
+  "engines": {
+    "node": "v4.4.4",
+    "npm": "2.11.1",
+    "redis": "3.0.6"
+  },
+
+  "devDependencies": {
+    "mocha": "^2.4.5",
+    "chai": "*",
+    "supertest": "^1.2.0"
+  }
+
+}
