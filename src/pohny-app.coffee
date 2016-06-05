@@ -38,6 +38,7 @@ define (require, exports, module) ->
           data: {}
           get: (userId) -> return @data[userId]
           set: (userId, connection) -> @data[userId] = connection
+          has: (userId) -> Boolean(@get(userId))
 
       respond: (userId, response) ->
         if response instanceof Object == false then throw "Invalid response type, HashMap expected"
@@ -61,7 +62,8 @@ define (require, exports, module) ->
       getHttpRequestHandler: () ->
         expressApp = express()
         env = expressApp.get 'env'
-        userController = require('lib/user-account')(@)
+        authController = require('controllers/auth-controller')(@)
+        twilioController = require('controllers/twilio-controller')(@)
 
         # 1. logger comes first to be able to log everything
         expressApp.use logger(if env != 'prod' then 'dev' else 'short')
@@ -71,7 +73,8 @@ define (require, exports, module) ->
           expressApp.use express.static(path.join(root, 'public'))
         expressApp.use bodyParser.json()
         expressApp.use bodyParser.urlencoded({ extended: true})
-        expressApp.use '/', userController
+        expressApp.use '/', authController
+        expressApp.use '/', twilioController
 
         if env != 'prod'
           expressApp.get '/info', (req, res) =>

@@ -9,7 +9,10 @@ define (require, exports, module) ->
     bodyParser = require 'body-parser'
     DateHelper = require 'lib/date-helper'
     userMapper = resources.userMapper
-    MessageService = require 'services/message-service'
+    Promise = require 'bluebird'
+
+    getTwilioClientId = (phone) ->
+      return phone.replace('+', '')
 
 
     app = express()
@@ -58,49 +61,57 @@ define (require, exports, module) ->
       params = req.body
       if Number(params.NumSegments) > 1 then console.log("There is a case for NumSegments !")
 
-      userMapper.get(params.To)
-      .then (user) ->
-        if !user then throw "User doesn't exist"
-        resources.twilio.messages(params.MessageSid).get()
-        .then (data) ->
-          createdAt = new Date(data.date_created)
-          message = { id: data.sid, me: false, body: data.body, at: DateHelper.getTimestampInSec(createdAt) }
-          #console.log resources.dataSource.users
-          return message
+      resources.twilio.messages(params.MessageSid).get()
+      .then (data) ->
+        createdAt = new Date(data.date_created)
+        message = { id: data.sid, me: false, body: data.body, at: DateHelper.getTimestampInSec(createdAt) }
+        #console.log resources.dataSource.users
+        return message
 
-        # Sometime getting message detail trigger a 404, in that case we just generate the timestamp of the message ourselves
-        .catch (err) ->
-          return { id: params.MessageSid, me: false, body: params.Body, at: DateHelper.getTimestampInSec() }
-        .then (message) ->
-          MessageService.save(userMapper, user, message, params.From)
+      # Sometime getting message detail trigger a 404, in that case we just generate the timestamp of the message ourselves
+      .catch (err) ->
+        return { id: params.MessageSid, me: false, body: params.Body, at: DateHelper.getTimestampInSec() }
+      .then (message) ->
+          rp.post {
+            uri: resources.pohnyUrl + '/message'
+            body: { from: params.From, to: params.To, msg: message }
+            json: true
+          }
+          .catch (err) ->
+            if err instanceof Error then throw err.message
+            else throw err
           .then () ->
-            rp.post {
-              uri: 'http://localhost:' + resources.pohnyPort + '/message'
-              body: { from: params.From, to: user.get('id'), msg: message }
-              json: true
-            }
-            .then () ->
-              debug 'message transmitted to pohny'
-              respond res, 200, '<?xml version="1.0" encoding="UTF-8"?><Response></Response>'
+            debug 'message transmitted to pohny'
+            respond res, 200, '<?xml version="1.0" encoding="UTF-8"?><Response></Response>'
       .catch getRouteErrorHandler(res)
 
     app.post '/called', (req, res) ->
       params = req.body
-      userMapper.get(params.To)
-      .then (user) ->
-        twiml = new Twilio.TwimlResponse()
-        twiml.dial () ->
-          @client(user.getTwilioClientId())
-        respond res, 200, twiml.toString()
+
+      Promise.try () ->
+        rp.post {
+          uri: resources.pohnyUrl + '/called'
+          body: { to: params.To }
+          json: true
+        }
+        .catch (err) ->
+          if err instanceof Error then throw err.message
+          else throw err
+        .then () ->
+          debug 'called transmitted to pohny'
+          twiml = new Twilio.TwimlResponse()
+          twiml.dial () ->
+            @client(getTwilioClientId(params.To))
+          respond res, 200, twiml.toString()
+      .catch getRouteErrorHandler(res)
 
     app.post '/call', (req, res) ->
       params = req.body
       #console.log params.From.replace('client:', '+')
-      userMapper.get(params.From.replace('client:', '+'))
-      .then (user) ->
-        twiml = new Twilio.TwimlResponse()
-        #twiml.dial () -> @client(req.body.Called)
-        twiml.dial {'callerId': user.get('id')}, () -> this.number(params.PhoneNumber)
-        respond res, 200, twiml.toString()
+      userId = params.From.replace('client:', '+')
+      twiml = new Twilio.TwimlResponse()
+      #twiml.dial () -> @client(req.body.Called)
+      twiml.dial {'callerId': userId}, () -> this.number(params.PhoneNumber)
+      respond res, 200, twiml.toString()
 
     return app

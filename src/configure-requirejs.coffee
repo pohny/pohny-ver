@@ -17,6 +17,7 @@ requirejs.config({
     services:    rootDir + "/domain/services"
     constants:   rootDir + "/domain/constants"
     models:      rootDir + "/domain/models"
+    controllers: rootDir + "/controllers"
     lib:         rootDir + "/lib"
 })
 

@@ -87,18 +87,6 @@ define (require) ->
       .catch getRouteErrorHandler(res)
 
 
-
-    message = (req, res) ->
-      body = req.body
-      Promise.try () ->
-        app.sendOne(body.to, 'message', [body.from, body.msg])
-        respond(res, 200)
-        # TODO: manage access policy in authMiddleware ?
-        #ip = req.connection.remoteAddress || req.headers['X-Forwarded-For']
-        #if ip != '127.0.0.1' then throw 'message in an internal of pohny'
-      .catch getRouteErrorHandler(res)
-
-    router.post '/message',   message
     router.post '/auth',      auth
     router.post '/refresh',   refresh
     return router

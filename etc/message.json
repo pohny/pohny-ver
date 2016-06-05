@@ -11,7 +11,7 @@
   "FromState":      "Quebec",
   "SmsStatus":      "received",
   "FromCity":       "",
-  "Body":           "Sent from your Twilio trial account - taberouette",
+  "Body":           "api test",
   "FromCountry":    "CA",
   "To":             "+15005550006",
   "ToZip":          "",

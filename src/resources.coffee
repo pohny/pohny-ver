@@ -85,7 +85,11 @@ define (require) ->
     return crypto.pbkdf2Sync(secret, salt, 99997, 32, 'sha512').toString('base64')
 
   resources.websocketProtocol = process.env.POHNY_WEBSOCKET_PROTOCOL || 'ws'
-  resources.pohnyPort = process.env.POHNY_PORT
+  pohnyPort = process.env.POHNY_PORT
+  pohnyDomain = process.env.POHNY_DOMAIN || 'localhost'
+  pohnyHttpProtocol = process.env.POHNY_SSL || 'http'
+  resources.pohnyUrl = pohnyHttpProtocol + '://' + pohnyDomain + ':' + pohnyPort
+  resources.internalTwilioWhitelistedIp = process.env.TWILIO_INTERNAL_IP || '::ffff:127.0.0.1'
 
   #======================================================================================================
   resources.init = (cb) ->
