@@ -77,12 +77,15 @@ define (require, exports, module) ->
             body: { from: params.From, to: params.To, msg: message }
             json: true
           }
-          .catch (err) ->
-            if err instanceof Error then throw err.message
-            else throw err
           .then () ->
             debug 'message transmitted to pohny'
             respond res, 200, '<?xml version="1.0" encoding="UTF-8"?><Response></Response>'
+          .catch (err) ->
+            if resources.twilioMessageFailover
+              res.redirect(302, resources.twilioMessageFailover)
+            else
+              if err instanceof Error then throw err.message
+              else throw err
       .catch getRouteErrorHandler(res)
 
     app.post '/called', (req, res) ->
@@ -94,15 +97,18 @@ define (require, exports, module) ->
           body: { to: params.To }
           json: true
         }
-        .catch (err) ->
-          if err instanceof Error then throw err.message
-          else throw err
         .then () ->
           debug 'called transmitted to pohny'
           twiml = new Twilio.TwimlResponse()
           twiml.dial () ->
             @client(getTwilioClientId(params.To))
           respond res, 200, twiml.toString()
+        .catch (err) ->
+          if resources.twilioVoiceFailover
+            res.redirect(302, resources.twilioVoiceFailover)
+          else
+            if err instanceof Error then throw err.message
+            else throw err
       .catch getRouteErrorHandler(res)
 
     app.post '/call', (req, res) ->
