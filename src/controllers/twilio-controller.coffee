@@ -12,12 +12,12 @@ define (require) ->
 
     message = (req, res) ->
       body = req.body
-      userMapper.get(body.from)
+      userMapper.get(body.to)
       .then (user) ->
         if !user then throw "User doesn't exist"
         MessageService.save(userMapper, user, body.msg, body.from)
         .then () ->
-          if app.connections.has(user.get('id')) == false then throw "User is not connected"
+          if app.isConnected(user.get('id')) == false then throw "User is not connected"
           app.sendOne(body.to, 'message', [body.from, body.msg])
           respond(res, 200)
           # TODO: manage access policy in authMiddleware ?

@@ -12,7 +12,7 @@ define (require) ->
       #userData = (new User(user)).statify()
       lines.push '  - user:' + k1
       lines.push '  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'
-      userData.connection = Boolean(app.connections.get(userData.id))
+      userData.connection = app.isConnected(userData.id)
       conversations = userData.conversations
       userData.conversations = '[Object]'
       lines.push '  ' + JSON.stringify(userData)

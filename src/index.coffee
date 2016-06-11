@@ -50,7 +50,7 @@ resources.init () ->
   # Create http server and listen on a specific port
   pohnyServer = http.createServer(pohnyApp.getHttpRequestHandler())
   # Start websocket server on top of http
-  wsServer = new websocket.server({ httpServer: pohnyServer })
+  wsServer = new websocket.server({ httpServer: pohnyServer, dropConnectionOnKeepaliveTimeout: false })
   wsServer.on 'request', (request) ->
     try pohnyApp.handleSocketRequest request
     catch e

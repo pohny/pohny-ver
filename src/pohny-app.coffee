@@ -38,7 +38,11 @@ define (require, exports, module) ->
           data: {}
           get: (userId) -> return @data[userId]
           set: (userId, connection) -> @data[userId] = connection
-          has: (userId) -> Boolean(@get(userId))
+          #has: (userId) -> Boolean(@get(userId))
+
+        @isConnected = (userId) ->
+          connection = @connections.get(userId) || {}
+          return Boolean(connection.connected)
 
       respond: (userId, response) ->
         if response instanceof Object == false then throw "Invalid response type, HashMap expected"

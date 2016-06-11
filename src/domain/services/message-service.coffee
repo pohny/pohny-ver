@@ -9,10 +9,12 @@ define (require) ->
     constructor: () -> throw new Error('static class, cannot be instanciated')
 
     @save = (userMapper, user, message, id) =>
-      conversation = user.get('conversations')[id]
+      conversations = user.get('conversations') || {}
+      conversation = conversations[id]
       if conversation == undefined then conversation = new Conversation({ id: id, unread: 0, messages: '[]' })
       conversation.addMessage(message)
-      user.get('conversations')[id] = conversation
+      conversations[id] = conversation
+      user.set('conversations', conversations)
       return userMapper.update(user)
 
     @send = (twilioClient, userMapper, user, id, data) ->
