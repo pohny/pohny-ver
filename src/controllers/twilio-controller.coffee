@@ -31,7 +31,7 @@ define (require) ->
       .then (user) ->
         # TODO: add a voiceservice to log incoming call (missed and received ..)
         if !user then throw "User doesn't exist"
-        if app.connections.has(user.get('id')) == false then throw "User is not connected"
+        if app.isConnected(user.get('id')) == false then throw "User is not connected"
         respond(res, 200, user.get('id'))
       .catch getRouteErrorHandler(res)
 
