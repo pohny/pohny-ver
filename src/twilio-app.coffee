@@ -82,7 +82,7 @@ define (require, exports, module) ->
             respond res, 200, '<?xml version="1.0" encoding="UTF-8"?><Response></Response>'
           .catch (err) ->
             if resources.twilioMessageFailover
-              res.redirect(302, resources.twilioMessageFailover)
+              res.redirect(307, resources.twilioMessageFailover)
             else
               if err instanceof Error then throw err.message
               else throw err
@@ -105,7 +105,7 @@ define (require, exports, module) ->
           respond res, 200, twiml.toString()
         .catch (err) ->
           if resources.twilioVoiceFailover
-            res.redirect(302, resources.twilioVoiceFailover)
+            res.redirect(307, resources.twilioVoiceFailover)
           else
             if err instanceof Error then throw err.message
             else throw err
