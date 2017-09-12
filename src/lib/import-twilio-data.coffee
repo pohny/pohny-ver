@@ -51,9 +51,7 @@ define (require) ->
         # NOTE: better to display innacurate number of unread than missing message
         conversation.unread = conversation.messages.length
         conversation.messages = JSON.stringify conversation.messages
-        conversation.phone = k
-        conversation.note = ""
-        conversation.name = ""
+        conversation.id = k
         conversations[k] = new Conversation(conversation)
         #promises2.push dbDriver.create 'conversations', conversation
         #console.log('conversation:', conversation)
