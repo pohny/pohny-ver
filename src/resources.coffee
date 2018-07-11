@@ -10,6 +10,9 @@ define (require) ->
   User   = require 'models/user'
   Conversation  = require 'models/conversation'
   crypto = require 'crypto'
+  setupUsers = require 'lib/setup-users'
+
+
 
   resources = {}
 
@@ -72,9 +75,6 @@ define (require) ->
   #deleteTwilioConversation(resources.twilio, phoneNumber, phoneNumber)
 
   #resources.dataSource = { users: {}, conversations: {}, contacts: {}}
-  resources.dataSource = { users: {}}
-  resources.Mapper = om.LocalMapper(resources.dataSource)
-  resources.userMapper = new resources.Mapper(User)
   #resources.conversationMapper = new resources.Mapper(Conversation)
   Conversation.history_size = process.env.MESSAGE_HISTORY_SIZE || 200
 
@@ -93,14 +93,61 @@ define (require) ->
   resources.twilioVoiceFailover   = process.env.TWILIO_VOICE_FAILOVER
   resources.twilioMessageFailover = process.env.TWILIO_MESSAGE_FAILOVER
 
+  initDb = () ->
+    #return new Promise (resolve, reject) ->
+    resources.dataSource = { users: {}}
+    resources.Mapper = om.LocalMapper(resources.dataSource)
+    resources.userMapper = new resources.Mapper(User)
+    users = JSON.parse process.env.POHNY_USERS
+    return setupUsers(resources, users, false)
+
+  initMongo = (mongoURI) ->
+    MongoDB = require 'mongodb'
+    MongoClient = Promise.promisifyAll(MongoDB).MongoClient
+    MongoClient.connect(mongoURI)
+    .then (mongo) ->
+      resources.mongo = mongo
+      resources.Mapper = om.MongoMapper(mongo)
+      resources.userMapper = new resources.Mapper(User)
+
+  ###
+  initRedis = (redisURI) ->
+    Redis = require 'ioredis'
+    redisConfig = {
+      lazyConnect: false,
+      enableOfflineQueue: false
+    }
+    resources.redis = redis = new Redis(redisURI, redisConfig)
+    resources.Mapper = om.RedisMapper(redis)
+    resources.userMapper = new resources.Mapper(User)
+
+    redis.on 'error', (e) ->
+      console.log e.toString()
+      if e && e.code ==  'ECONNREFUSED' then resources.maintenance = true
+    return new Promise (resolve, reject) ->
+      redis.once 'ready', () ->
+        resolve()
+        redis.on 'ready', () -> resources.maintenance = false
+
+  ###
+
   #======================================================================================================
   resources.init = (cb) ->
-    setupUsers = require 'lib/setup-users'
-    users = JSON.parse process.env.POHNY_USERS
-    setupUsers(resources, users)
+
+    promise = null
+    promise = switch
+      when process.env.MONGO_URI then initMongo(process.env.MONGO_URI)
+      #when process.env.REDIS_URI then initRedis(process.env.REDIS_URI)
+      else initLocal()
+
+    promise
     .then () ->
-      #console.log "twilio data imported", resources.dataSource
       if cb then cb()
+
+  resources.destruct = () ->
+    switch
+      when process.env.MONGO_URI then resources.mongo.close()
+      #when process.env.REDIS_URI then resources.redis.disconnect()
 
 
   return resources

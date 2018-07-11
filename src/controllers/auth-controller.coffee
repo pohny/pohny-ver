@@ -51,7 +51,7 @@ define (require) ->
         return userMapper.get(values.phone)
         .then (user) =>
           # Matching user userect, if valid, update it
-          if Boolean(user) == false || resources.hash(values.password, user.get('salt')) != user.get('password')
+          if Boolean(user) == false || user.has('salt') == false || resources.hash(values.password, user.get('salt')) != user.get('password')
             authLimit++
             clearTimeout(authTimeout)
             setTimeout (() -> authLimit = 0), 15 * 60 * 1000

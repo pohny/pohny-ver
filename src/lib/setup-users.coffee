@@ -2,7 +2,7 @@ define (require) ->
   fs = require 'fs'
   User = require 'models/user'
   Promise = require 'bluebird'
-  return (resources, users) ->
+  return (resources, users, importEnabled) ->
     promises = []
     if users instanceof Array == false
       throw "WARNING: No user created"
@@ -24,7 +24,7 @@ define (require) ->
           resources.userMapper.create(user)
           .then () ->
             # NOTE: Only use IMPORT_ENABLED is you're using LocalMapper (see resources.coffee)
-            if process.env.IMPORT_ENABLED
+            if importEnabled
               TwilioData = require 'lib/import-twilio-data'
               TwilioData.import(resources.twilio, user, resources.Mapper)
               #TwilioData.debugImport(resources.twilio, user, resources.Mapper)

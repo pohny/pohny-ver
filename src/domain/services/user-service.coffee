@@ -57,22 +57,34 @@ define (require) ->
     ###
 
   UserService['conversations.remove'] =  (id, data) ->
-    delete @user.get('conversations')[id]
+    conversations = @user.get('conversations')
+    delete conversations[id]
+    @user.set('conversations', conversations)
     @userMapper.update(@user)
 
   UserService['conversations.change'] =  (id, data) ->
-    @user.get('conversations')[id].set('name', data.name)
-    @user.get('conversations')[id].set('note', data.note)
+    conversations = @user.get('conversations')
+    conv = new Conversation(conversations[id])
+    conv.set('name', data.name)
+    conv.set('note', data.note)
+    conversations[id] = conv.toJSON()
+    @user.set('conversations', conversations)
     @userMapper.update(@user)
 
   UserService['conversations.read'] =  (id) ->
-    @user.get('conversations')[id].set('unread', 0)
+    conversations = @user.get('conversations')
+    conv = new Conversation(conversations[id])
+    conv.set('unread', 0)
+    conversations[id] = conv.toJSON()
+    @user.set('conversations', conversations)
     @userMapper.update(@user)
 
   UserService['conversations.add'] =  (id, data) ->
     data.messages = '[]'
     data.unread = 0
-    @user.get('conversations')[id] = new Conversation(data)
+    conversations = @user.get('conversations')
+    conversations[id] = new Conversation(data)
+    @user.set('conversations', conversations)
     @userMapper.update(@user)
 
   UserService['messages.add'] =  (id, data) -> MessageService.send(@twilioClient, @userMapper, @user, id, data)

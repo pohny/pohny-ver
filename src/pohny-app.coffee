@@ -18,8 +18,8 @@ define (require, exports, module) ->
 
     #conversationMapper = resources.conversationMapper
     userMapper = resources.userMapper
-    dataSource = resources.dataSource
-    users = dataSource.users
+    #dataSource = resources.dataSource
+    #users = dataSource.users
     root = path.join( path.dirname(module.uri), '../')
 
 
@@ -82,10 +82,8 @@ define (require, exports, module) ->
 
         if env != 'prod'
           expressApp.get '/info', (req, res) =>
-            dumpLocalDB = require 'lib/dump-local-db'
-            #resources.respond res, 200, dumpLocalDB(resources.dataSource, @)
-            #res.setHeader('content-type', 'text/plain')
-            res.status(200).send dumpLocalDB(resources.dataSource, @)
+            #dumpLocalDB = require 'lib/dump-local-db'
+            #res.status(200).send dumpLocalDB(resources.dataSource, @)
 
 
       ### (public) Register connetion ###
