@@ -82,7 +82,16 @@ define (require, exports, module) ->
             respond res, 200, '<?xml version="1.0" encoding="UTF-8"?><Response></Response>'
           .catch (err) ->
             if resources.twilioMessageFailover
-              res.redirect(307, resources.twilioMessageFailover)
+              # twilio doesn't support 307, monkas.
+              #res.redirect(307, resources.twilioMessageFailover)
+              rp.get {
+                uri: resources.twilioMessageFailover,
+                qs: params,
+                json: true
+              }
+              .then () ->
+                debug 'message transmitted to failover'
+                respond res, 200, '<?xml version="1.0" encoding="UTF-8"?><Response></Response>'
             else
               if err instanceof Error then throw err.message
               else throw err

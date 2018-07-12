@@ -5,16 +5,16 @@ var should  = require('chai').should(),
     supertest   = require('supertest'),
     requirejs = require("../build/configure-requirejs"),
     resources = requirejs('root/resources'),
-    DateHelper = requirejs('lib/date-helper'),
+    DateHelper = requirejs('lib/date-helper');
 
 
-port = process.env.TEST_PORT || process.env.TWILIO_PORT
+var port = process.env.TWILIO_PORT;
 var base_http_url = 'http://localhost:' + (Number(port));
 var message = JSON.parse(fs.readFileSync('./etc/message.json'))
 var called = JSON.parse(fs.readFileSync('./etc/called.json'))
 
-users = JSON.parse(process.env.POHNY_USERS)
-phoneNumber = users[0].phone
+var users = JSON.parse(process.env.POHNY_USERS);
+var phoneNumber = users[0].phone;
 called.Called = phoneNumber
 called.To = phoneNumber
 message.From = phoneNumber

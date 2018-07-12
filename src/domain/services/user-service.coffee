@@ -83,7 +83,7 @@ define (require) ->
     data.messages = '[]'
     data.unread = 0
     conversations = @user.get('conversations')
-    conversations[id] = new Conversation(data)
+    conversations[id] = (new Conversation(data)).toJSON()
     @user.set('conversations', conversations)
     @userMapper.update(@user)
 

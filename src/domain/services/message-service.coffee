@@ -10,10 +10,11 @@ define (require) ->
 
     @save = (userMapper, user, message, id) =>
       conversations = user.get('conversations') || {}
-      conversation = conversations[id]
-      if conversation == undefined then conversation = new Conversation({ id: id, unread: 0, messages: '[]' })
-      conversation.addMessage(message)
-      conversations[id] = conversation
+      convData = conversations[id]
+      if convData == undefined then convData = { id: id, unread: 0, messages: '[]' }
+      conv = new Conversation(convData)
+      conv.addMessage(message)
+      conversations[id] = conv.toJSON()
       user.set('conversations', conversations)
       return userMapper.update(user)
 
