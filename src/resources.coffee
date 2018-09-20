@@ -93,7 +93,7 @@ define (require) ->
   resources.twilioVoiceFailover   = process.env.TWILIO_VOICE_FAILOVER
   resources.twilioMessageFailover = process.env.TWILIO_MESSAGE_FAILOVER
 
-  initDb = () ->
+  initLocal = () ->
     #return new Promise (resolve, reject) ->
     resources.dataSource = { users: {}}
     resources.Mapper = om.LocalMapper(resources.dataSource)
@@ -110,7 +110,6 @@ define (require) ->
       resources.Mapper = om.MongoMapper(mongo)
       resources.userMapper = new resources.Mapper(User)
 
-  ###
   initRedis = (redisURI) ->
     Redis = require 'ioredis'
     redisConfig = {
@@ -129,7 +128,6 @@ define (require) ->
         resolve()
         redis.on 'ready', () -> resources.maintenance = false
 
-  ###
 
   #======================================================================================================
   resources.init = (cb) ->
@@ -137,7 +135,7 @@ define (require) ->
     promise = null
     promise = switch
       when process.env.MONGO_URI then initMongo(process.env.MONGO_URI)
-      #when process.env.REDIS_URI then initRedis(process.env.REDIS_URI)
+      when process.env.REDIS_URI then initRedis(process.env.REDIS_URI)
       else initLocal()
 
     promise
@@ -147,7 +145,7 @@ define (require) ->
   resources.destruct = () ->
     switch
       when process.env.MONGO_URI then resources.mongo.close()
-      #when process.env.REDIS_URI then resources.redis.disconnect()
+      when process.env.REDIS_URI then resources.redis.disconnect()
 
 
   return resources

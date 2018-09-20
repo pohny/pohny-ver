@@ -113,23 +113,25 @@ define (require, exports, module) ->
           @sendOne(userId, "init", [user.get('conversations'), userData])
 
           connection.on 'message', (message) =>
-            if message.type != 'utf8' then throw "Unsuported data format"
-            debug '[' + userId + '] received:', message.utf8Data
-            data = JSONRPC.handleRequest(message.utf8Data, UserService, {
-              user: user
-              twilioClient: resources.twilio
-              #conversationMapper: conversationMapper
-              userMapper: userMapper
-              url: resources.websocketProtocol + '://' + request.host
-              app: @
-            })
-            if data && data.result
-              if data.result instanceof Promise
-                data.result.then (ret) =>
-                  data.result = ret
+            userMapper.get(userId)
+            .then (user) =>
+              if message.type != 'utf8' then throw "Unsuported data format"
+              debug '[' + userId + '] received:', message.utf8Data
+              data = JSONRPC.handleRequest(message.utf8Data, UserService, {
+                user: user
+                twilioClient: resources.twilio
+                #conversationMapper: conversationMapper
+                userMapper: userMapper
+                url: resources.websocketProtocol + '://' + request.host
+                app: @
+              })
+              if data && data.result
+                if data.result instanceof Promise
+                  data.result.then (ret) =>
+                    data.result = ret
+                    @respond userId, data
+                else
                   @respond userId, data
-              else
-                @respond userId, data
 
           connection.on 'close', (reasonCode, description) =>
             debug '[' + userId + '] disconnected'

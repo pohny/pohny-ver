@@ -12,6 +12,7 @@ define (require) ->
       password: Joi.string()
       #contacts: Joi.array()
       #conversations: Joi.object()
+      conversations: Joi.string()
       #connection: Joi.object().allow(null)
       #name: Joi.string().min(3).max(100),
       #ip: Joi.string().min(7).max(50)
@@ -21,7 +22,13 @@ define (require) ->
       super(attrs, User.schema)
 
     set: (key, value) ->
+      if key == 'conversations' && _.isString(value) == false then value = JSON.stringify(value)
       super(key, value)
+
+    get: (key) ->
+      value = super(key)
+      if key == 'conversations' && value != undefined then value = JSON.parse(value)
+      return value
 
     getTwilioClientId: () ->
       return @get('id').replace('+', '')
