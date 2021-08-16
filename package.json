@@ -1,49 +1,40 @@
 {
   "name": "pohny-ver",
-  "version": "0.0.2",
-
+  "version": "0.0.3",
   "scripts": {
     "build": "coffee --compile --output build src",
     "watch": "coffee --compile --watch --output build src",
     "start": "node ./bin/www",
     "test": "mocha test/*"
   },
-
   "dependencies": {
-
-    "requirejs": "*",
-    "debug": "*",
-    "lodash": "*",
-    "joi": "*",
-
-    "jwt-simple": "*",
-    "jsonrpc-simple": "*",
-    "request-promise": "*",
-
-    "bson": "*",
-    "websocket": "^1.0.23",
-    "express": "4.13.4",
-    "morgan" : "*",
-    "body-parser" : "*",
-    "om-nomnom": "*",
     "bluebird": "*",
-
+    "body-parser": "*",
+    "bson": "*",
+    "coffeescript": "*",
+    "debug": "*",
+    "express": "^4.17.1",
+    "ioredis": "*",
+    "joi": "*",
+    "jsonrpc-simple": "*",
+    "jwt-simple": "*",
+    "lodash": "*",
+    "mongodb": "^4.1.0",
+    "morgan": "*",
+    "om-nomnom": "0.0.5",
+    "request-promise": "*",
+    "requirejs": "*",
     "twilio": "2.9.1",
-
-    "mongodb": "2.2.31",
-    "ioredis": "^3.1.1"
+    "websocket": "^1.0.23"
   },
-
   "engines": {
-    "node": "v4.4.4",
-    "npm": "2.11.1",
+    "node": "v16.14.1",
+    "npm": "6.14.12",
     "redis": "3.0.6"
   },
-
   "devDependencies": {
-    "mocha": "^2.4.5",
     "chai": "*",
-    "supertest": "^1.2.0"
+    "mocha": "^9.0.3",
+    "supertest": "^6.1.5"
   }
-
 }

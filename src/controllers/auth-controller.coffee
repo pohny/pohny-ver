@@ -16,12 +16,13 @@ define (require) ->
     userMapper = resources.userMapper
 
 
-    userAccountSchema = {
+    phoneSchema = Joi.string().required()
+    userAccountSchema = Joi.object({
       #email:    Joi.string().required().email()
-      phone:   Joi.string().required()
+      phone: phoneSchema
       password:   Joi.string().required().min(6).max(100)
       is_trusted: Joi.boolean()
-    }
+    })
 
     getAccessToken = (user) ->
       secret = resources.getSecret()
@@ -44,7 +45,7 @@ define (require) ->
 
       Promise.try () ->
         if authLimit > 20 then throw "Auth attempt limit reached"
-        result = Joi.validate(body, userAccountSchema, joiOptions)
+        result = userAccountSchema.validate(body, joiOptions)
         if result.error then throw result.error.details
         values = result.value
 
@@ -74,7 +75,7 @@ define (require) ->
       Promise.try () ->
         if refreshLimit > 10 then throw "Refresh attempt limit reached"
         Joi.attempt(body.refresh_token, Joi.string())
-        phone = Joi.attempt(body.phone, userAccountSchema.phone)
+        phone = Joi.attempt(body.phone, phoneSchema)
         return userMapper.get(phone)
       .then (user) ->
         if user and jwt.decode(body.refresh_token, user.get('salt')) == user.get('id')

@@ -10,6 +10,7 @@ define (require) ->
       twilio_app_sid: Joi.string()
       name: Joi.string()
       password: Joi.string()
+      salt: Joi.string()
       #contacts: Joi.array()
       #conversations: Joi.object()
       conversations: Joi.string()
