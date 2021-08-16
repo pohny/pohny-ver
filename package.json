@@ -4,8 +4,11 @@
   "scripts": {
     "build": "coffee --compile --output build src",
     "watch": "coffee --compile --watch --output build src",
-    "start": "node ./bin/www",
-    "test": "mocha test/*"
+    "server": "node ./bin/www",
+    "test": "mocha test/*",
+    "build-docker-image": "docker build -t incubatio/pohny-ver -f Dockerfile  .",
+    "run-docker-image": "docker run --env-file etc/env.sh --network pohny-net incubatio/pohny-ver:latest",
+    "rm-docker-image": "docker rm --force $(docker ps -q --filter ancestor=\"incubatio/pohny-ver:latest\")"
   },
   "dependencies": {
     "bluebird": "*",
@@ -33,6 +36,7 @@
     "redis": "3.0.6"
   },
   "devDependencies": {
+    "dotenv": "^10.0.0",
     "chai": "*",
     "mocha": "^9.0.3",
     "supertest": "^6.1.5"

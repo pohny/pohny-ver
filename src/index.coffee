@@ -1,6 +1,9 @@
 #!/usr/bin/env node
 # Init requireJS
 requirejs = require "./configure-requirejs"
+if (process.env.TWILIO_PORT == undefined)
+    console.log("loading dotenv variable (Only in dev)")
+    require('dotenv').config( { path: 'etc/env.sh' })
 
 debug     = require('debug')('index')
 http      = require 'http'

@@ -5,6 +5,7 @@ var should  = require('chai').should(),
     requirejs = require("../build/configure-requirejs"),
     resources = requirejs('root/resources'),
     DateHelper = requirejs('lib/date-helper');
+require('dotenv').config( { path: 'etc/env.sh' })
 
 
 var port = process.env.POHNY_PORT
