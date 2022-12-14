@@ -16,7 +16,7 @@
     "bson": "*",
     "coffeescript": "*",
     "debug": "*",
-    "express": "^4.17.1",
+    "express": "^4.17.3",
     "ioredis": "*",
     "joi": "*",
     "jsonrpc-simple": "*",
