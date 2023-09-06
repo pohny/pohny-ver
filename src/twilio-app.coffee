@@ -126,7 +126,8 @@ define (require, exports, module) ->
       userId = params.From.replace('client:', '+')
       twiml = new Twilio.TwimlResponse()
       #twiml.dial () -> @client(req.body.Called)
-      twiml.dial {'callerId': userId}, () -> this.number(params.PhoneNumber)
+      #console.log(params)
+      twiml.dial {'callerId': userId}, () -> this.number(params.To)
       respond res, 200, twiml.toString()
 
     return app
