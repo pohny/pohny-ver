@@ -12,6 +12,8 @@ define (require) ->
     @schema: {
       #id: Joi.string() # <user.Id>-<intelocutor.id>
       id: Joi.string().required().regex(/^\+(?:[0-9] ?){6,14}[0-9]$/)
+      name: Joi.string().allow("", null)
+      note: Joi.string().allow("", null)
       unread: Joi.number().default(0)
       messages: Joi.string().default('[]') # Message[] stringified
     }

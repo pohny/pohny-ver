@@ -41,9 +41,9 @@ define (require) ->
             me: m1.direction == "outbound-api" && isSender,
             at: DateHelper.getTimestampInSec(new Date(m1.date_created))
           })
-          #console.log conversations[conversationId].messages.length
+          console.log conversations[conversationId].messages.length
 
-      #console.log 'conversationIds:', Object.keys(conversations)
+      console.log 'conversationIds:', Object.keys(conversations)
       promises2 = []
       for k, conversation of conversations
         conversation.messages.sort (x, y) -> return y.at - x.at
@@ -62,7 +62,7 @@ define (require) ->
         contacts[contactNumber] =  { name: "", id: contactNumber, note: "" }
       ###
 
-      dbDriver.update 'users', user.get('id'), { conversations: conversations }
+      promises2.push dbDriver.update 'user', user.get('id'), { conversations: JSON.stringify(conversations) }
 
       return promises2
 
